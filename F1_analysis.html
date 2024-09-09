@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>F1_analysis</title>
+        <meta charset="utf-8">
+        <style>
+            h1 {
+                text-align: center;
+            }
+        </style>
+        <py-env>
+            - matplotlib
+            - pandas
+        </py-env>
+        <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+        <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    </head>
+    <body>
+        <h1>Welcome Formula 1 analysis Web</h1>
+        <div id='pltdiv' align='center'></div>
+        <div id="csv"></div>
+        <py-script>
+            import pandas as pd
+            from pyodide.http import open_url
+            
+            url_content = open_url("https://raw.githubusercontent.com/kmc7582s/f1data/main/2021%20f1%20point(1).csv")
+            dt = pd.read_csv(url_content)
+            dt = dt.sort_values(by='Points', ascending=False)
+            val_list = dt.values.tolist()
+            csv = Element('csv')
+            # csv.write(dt.shape)
+
+            
+            teams = []
+            score = []
+            color = []
+            
+            for i in val_list:
+              teams.append(i[0])
+              score.append(float(i[1]))
+              color.append(i[2])
+            
+            
+            <!-- print(type(val_list))
+            print(val_list)
+            print(teams)
+            print(score)
+            print(color)  -->
+           
+
+            import matplotlib.pyplot as plt
+            
+            fig = plt.figure(figsize=(20,20))
+            explode = [0.07,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.05,0.05]
+
+            plt.pie(score,labels=teams,startangle=90,counterclock=False,colors=color,explode=explode)
+            plt.legend() 
+            pltdiv = Element('pltdiv')
+            pltdiv.write(fig)
+        </py-script>
+    </body>
+</html>
